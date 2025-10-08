@@ -151,9 +151,9 @@ function scrollSpy() {
         }
     });
 
-    // Special case: If scrolled to the very top, set current to 'home'
+    // Special case: If scrolled to the very top, set current to 'hero'
     if (window.scrollY < 200) {
-        current = 'home'; // <-- Change 'home' to your actual hero section ID if different
+        current = 'hero';
     }
 
     // Update active link
@@ -166,8 +166,89 @@ function scrollSpy() {
 }
 
 window.addEventListener('scroll', scrollSpy);
+
+// ===============================
+// Mobile Navigation Toggle
+// ===============================
+function mobileNavToggle() {
+    const navbar = document.getElementById('navbar');
+    const toggle = document.getElementById('mobile-nav-toggle');
+
+    if (navbar && toggle) {
+        // This single line handles both opening and closing the menu
+        navbar.classList.toggle('navbar-mobile'); 
+
+        // Change the '☰' icon to an 'X' (and vice-versa) based on the current state
+        if (navbar.classList.contains('navbar-mobile')) {
+            toggle.innerHTML = 'X'; // Menu is OPEN, show 'X' (close icon)
+        } else {
+            toggle.innerHTML = '☰'; // Menu is CLOSED, show '☰' (open icon)
+        }
+    }
+}
+
+// ===============================
+// Close Mobile Menu
+// ===============================
+function closeMobileNav() {
+    const navbar = document.getElementById('navbar');
+    const toggle = document.getElementById('mobile-nav-toggle');
+    
+    if (navbar && navbar.classList.contains('navbar-mobile')) {
+        navbar.classList.remove('navbar-mobile');
+        toggle.innerHTML = '☰';
+    }
+}
+
+// ===============================
+// Initialize on Load
+// ===============================
 window.addEventListener('load', () => {
     loadGallery();
     scrollSpy();
-});
 
+    // Attach the mobile toggle listener
+    const mobileToggle = document.getElementById('mobile-nav-toggle');
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', mobileNavToggle);
+    }
+
+    // Close menu when clicking any nav link
+    const navLinks = document.querySelectorAll('.navbar a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            // Get the href attribute
+            const href = link.getAttribute('href');
+            
+            // Check if it's an anchor link
+            if (href && href.startsWith('#')) {
+                e.preventDefault();
+                
+                // Close mobile menu first
+                closeMobileNav();
+                
+                // Get target section
+                const targetId = href.substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                // Scroll to target or top of page
+                if (targetSection) {
+                    setTimeout(() => {
+                        targetSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }, 100);
+                } else if (targetId === 'hero') {
+                    // If hero section doesn't exist, scroll to top
+                    setTimeout(() => {
+                        window.scrollTo({ 
+                            top: 0, 
+                            behavior: 'smooth' 
+                        });
+                    }, 100);
+                }
+            }
+        });
+    });
+});
