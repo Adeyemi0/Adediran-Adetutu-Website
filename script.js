@@ -171,22 +171,3 @@ window.addEventListener('load', () => {
     scrollSpy();
 });
 
-// ===============================
-// Mobile Navigation Toggle
-// ===============================
-const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
-const navbar = document.querySelector('.navbar');
-
-if (mobileNavToggle) {
-    mobileNavToggle.addEventListener('click', function() {
-        // Toggle the mobile icon (e.g., from hamburger to close 'x')
-        this.classList.toggle('bi-list');
-        this.classList.toggle('bi-x');
-        
-        // Toggle the main navbar element class
-        navbar.classList.toggle('navbar-mobile');
-        
-        // Hide/Show page content by toggling body overflow (as seen in lightbox logic)
-        document.body.classList.toggle('mobile-nav-active');
-    });
-}
