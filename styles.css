@@ -867,6 +867,7 @@ header {
             color: rgba(255, 255, 255, 0.85);
             font-weight: 300;
             margin-bottom: 40px;
+            text-align: justify;
         }
 
         .social-links {
