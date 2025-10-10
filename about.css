@@ -1,3 +1,4 @@
+/* about.css: MODIFIED */
 * {
     margin: 0;
     padding: 0;
@@ -285,10 +286,20 @@ header {
     .about-container {
         grid-template-columns: 1fr;
         gap: 40px;
+        /* NEW: Reverse the order for the single-column layout, putting the image first */
+        display: flex;
+        flex-direction: column;
     }
 
     .about-image {
         height: 500px;
+        /* NEW: Ensure image is the first item in the flex container */
+        order: 1;
+    }
+    
+    .about-content {
+        /* NEW: Ensure content is the second item in the flex container */
+        order: 2;
     }
 
     .about {
