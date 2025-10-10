@@ -1,254 +1,186 @@
-// ===============================
-// Generate image array (1–42)
-// ===============================
-const images = [];
-for (let i = 1; i <= 42; i++) {
-    const extension = i === 3 ? 'jpg' : 'jpeg';
-    images.push(`img/${i}.${extension}`);
-}
+/**
+ * Gallery Image Data
+ * Note: Adjusted row span values for better masonry layout
+ */
+const galleryImages = [
+    { src: "img/7.jpeg", alt: "Gallery Image 1", span: 18 },
+    { src: "img/8.jpeg", alt: "Gallery Image 2", span: 12 },
+    { src: "img/9.jpeg", alt: "Gallery Image 3", span: 22 },
+    { src: "img/10.jpeg", alt: "Gallery Image 4", span: 15 },
+    { src: "img/11.jpeg", alt: "Gallery Image 5", span: 10 },
+    { src: "img/12.jpeg", alt: "Gallery Image 6", span: 16 },
+    { src: "img/13.jpeg", alt: "Gallery Image 7", span: 18 },
+    { src: "img/14.jpeg", alt: "Gallery Image 8", span: 13 },
+    { src: "img/15.jpeg", alt: "Gallery Image 9", span: 20 },
+    { src: "img/16.jpeg", alt: "Gallery Image 10", span: 16 },
+    { src: "img/17.jpeg", alt: "Gallery Image 11", span: 10 },
+    { src: "img/18.jpeg", alt: "Gallery Image 12", span: 22 },
+    { src: "img/20.jpeg", alt: "Gallery Image 13", span: 18 },
+    { src: "img/22.jpeg", alt: "Gallery Image 14", span: 15 },
+    { src: "img/23.jpeg", alt: "Gallery Image 15", span: 20 },
+    { src: "img/24.jpeg", alt: "Gallery Image 16", span: 12 },
+    { src: "img/25.jpeg", alt: "Gallery Image 17", span: 16 },
+    { src: "img/26.jpeg", alt: "Gallery Image 18", span: 22 },
+    { src: "img/27.jpeg", alt: "Gallery Image 19", span: 18 },
+    { src: "img/28.jpeg", alt: "Gallery Image 20", span: 15 }
+];
 
 let currentImageIndex = 0;
 
-// ===============================
-// Load Gallery
-// ===============================
-function loadGallery() {
-    const galleryGrid = document.getElementById('galleryGrid');
-    
-    if (!galleryGrid) {
-        console.error('Gallery grid element not found!');
-        return;
+/**
+ * Mobile Navigation Toggle and Initialization
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const navbar = document.getElementById('navbar');
+    const header = document.querySelector('header');
+
+    if (mobileNavToggle) {
+        mobileNavToggle.addEventListener('click', function() {
+            navbar.classList.toggle('navbar-mobile');
+            mobileNavToggle.classList.toggle('toggle-active');
+            // Use body to prevent scroll on mobile when menu is open
+            document.body.classList.toggle('mobile-nav-active'); 
+        });
+
+        // Close mobile nav on link click
+        document.querySelectorAll('.navbar a').forEach(link => {
+            link.addEventListener('click', () => {
+                // Only close if it's currently open
+                if (navbar.classList.contains('navbar-mobile')) {
+                    navbar.classList.remove('navbar-mobile');
+                    mobileNavToggle.classList.remove('toggle-active');
+                    document.body.classList.remove('mobile-nav-active');
+                }
+            });
+        });
     }
+
+    // Initialize Portfolio Gallery
+    setupGallery();
     
-    images.forEach((imgSrc, index) => {
+    // Initialize ScrollSpy
+    setupScrollSpy();
+});
+
+/**
+ * PORTFOLIO GALLERY LOGIC
+ */
+function setupGallery() {
+    const galleryGrid = document.getElementById('galleryGrid');
+
+    if (!galleryGrid) return;
+
+    galleryImages.forEach((imgData, index) => {
         const item = document.createElement('div');
-        item.className = 'gallery-item';
-        
+        item.classList.add('gallery-item');
+        // Set row span for masonry layout
+        item.style.gridRowEnd = `span ${imgData.span}`;
+
         const img = document.createElement('img');
-        img.src = imgSrc;
-        img.alt = `Gallery Image ${index + 1}`;
-        img.loading = 'lazy';
-        
-        // Error handling
-        img.onerror = function() {
-            console.error(`Failed to load image: ${imgSrc}`);
-            item.style.display = 'none';
-        };
-        
-        // Set grid span based on aspect ratio
-        img.onload = function() {
-            const aspectRatio = this.naturalHeight / this.naturalWidth;
-            let span;
-            
-            if (aspectRatio > 1.5) span = 25;
-            else if (aspectRatio > 1.2) span = 20;
-            else if (aspectRatio > 0.8) span = 15;
-            else span = 12;
-            
-            item.style.gridRowEnd = `span ${span}`;
-        };
-        
-        img.onclick = function() {
-            openLightbox(index);
-        };
-        
+        img.src = imgData.src;
+        img.alt = imgData.alt;
+        img.loading = 'lazy'; // Use lazy loading for performance
+
         item.appendChild(img);
+        
+        // Open lightbox on click
+        item.addEventListener('click', () => openLightbox(index));
+
         galleryGrid.appendChild(item);
     });
 }
 
-// ===============================
-// Lightbox Functions
-// ===============================
+/**
+ * SCROLLSPY LOGIC
+ * Updates the active navigation link based on the visible section.
+ */
+function setupScrollSpy() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Define the offset (e.g., header height) so the section becomes active slightly before it hits the top
+    const offset = 100; 
+
+    function onScroll() {
+        const scrollPosition = window.scrollY;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - offset;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+            const correspondingLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+
+            // Check if the current scroll position is within the section bounds
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                // Remove 'active' from all links and add it to the current one
+                navLinks.forEach(link => link.classList.remove('active'));
+                if (correspondingLink) {
+                    correspondingLink.classList.add('active');
+                }
+            } else if (scrollPosition < sections[0].offsetTop - offset) {
+                // Special case: If scrolling to the very top, make 'Home' active
+                 navLinks.forEach(link => link.classList.remove('active'));
+                 document.querySelector('.nav-link[href="#hero"]').classList.add('active');
+            }
+        });
+    }
+
+    // Run once on load and every time the user scrolls
+    window.addEventListener('scroll', onScroll);
+    // Initial check for 'Home' section
+    onScroll(); 
+}
+
+
+/**
+ * LIGHTBOX FUNCTIONS (Made globally accessible by placing them in the global scope)
+ */
+
 function openLightbox(index) {
     currentImageIndex = index;
     const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-        lightbox.classList.add('active');
-        document.getElementById('lightboxImg').src = images[index];
-        document.body.style.overflow = 'hidden';
-    }
+    const lightboxImg = document.getElementById('lightboxImg');
+
+    lightboxImg.src = galleryImages[currentImageIndex].src;
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent scrolling background
 }
 
 function closeLightbox() {
     const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
+    lightbox.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
 }
 
 function changeImage(direction) {
     currentImageIndex += direction;
-    
+
     if (currentImageIndex < 0) {
-        currentImageIndex = images.length - 1;
-    } else if (currentImageIndex >= images.length) {
+        currentImageIndex = galleryImages.length - 1;
+    } else if (currentImageIndex >= galleryImages.length) {
         currentImageIndex = 0;
     }
-    
-    document.getElementById('lightboxImg').src = images[currentImageIndex];
+
+    const lightboxImg = document.getElementById('lightboxImg');
+    lightboxImg.src = galleryImages[currentImageIndex].src;
 }
 
-// ===============================
-// Keyboard & Click Controls
-// ===============================
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeLightbox();
-    else if (e.key === 'ArrowLeft') changeImage(-1);
-    else if (e.key === 'ArrowRight') changeImage(1);
+// Close lightbox on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('lightbox').classList.contains('active')) {
+        closeLightbox();
+    }
 });
 
-const lightbox = document.getElementById('lightbox');
-if (lightbox) {
-    lightbox.addEventListener('click', function(e) {
-        if (e.target === this) closeLightbox();
-    });
-}
-
-// ===============================
-// Contact Form Handling
-// ===============================
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const subject = document.getElementById('subject').value;
-        const message = document.getElementById('message').value;
-        
-        const successMessage = document.getElementById('successMessage');
-        successMessage.classList.add('show');
-        
-        this.reset();
-        
-        setTimeout(() => {
-            successMessage.classList.remove('show');
-        }, 5000);
-        
-        console.log('Form submitted:', { name, email, subject, message });
-    });
-}
-
-// ===============================
-// Scroll Spy - Active Nav Update
-// ===============================
-function scrollSpy() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    let current = '';
-
-    // Determine which section is currently in view
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        // Adjust offset for fixed header height
-        if (window.scrollY >= sectionTop - sectionHeight / 3) {
-            current = section.getAttribute('id');
-        }
-    });
-
-    // Special case: If scrolled to the very top, set current to 'hero'
-    if (window.scrollY < 200) {
-        current = 'hero';
+// Close lightbox when clicking outside the image content
+document.getElementById('lightbox').addEventListener('click', (e) => {
+    if (e.target.id === 'lightbox') {
+        closeLightbox();
     }
-
-    // Update active link
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
-    });
-}
-
-window.addEventListener('scroll', scrollSpy);
-
-// ===============================
-// Mobile Navigation Toggle
-// ===============================
-function mobileNavToggle() {
-    const navbar = document.getElementById('navbar');
-    const toggle = document.getElementById('mobile-nav-toggle');
-
-    if (navbar && toggle) {
-        // This single line handles both opening and closing the menu
-        navbar.classList.toggle('navbar-mobile'); 
-
-        // Change the '☰' icon to an 'X' (and vice-versa) based on the current state
-        if (navbar.classList.contains('navbar-mobile')) {
-            toggle.innerHTML = 'X'; // Menu is OPEN, show 'X' (close icon)
-        } else {
-            toggle.innerHTML = '☰'; // Menu is CLOSED, show '☰' (open icon)
-        }
-    }
-}
-
-// ===============================
-// Close Mobile Menu
-// ===============================
-function closeMobileNav() {
-    const navbar = document.getElementById('navbar');
-    const toggle = document.getElementById('mobile-nav-toggle');
-    
-    if (navbar && navbar.classList.contains('navbar-mobile')) {
-        navbar.classList.remove('navbar-mobile');
-        toggle.innerHTML = '☰';
-    }
-}
-
-// ===============================
-// Initialize on Load
-// ===============================
-window.addEventListener('load', () => {
-    loadGallery();
-    scrollSpy();
-
-    // Attach the mobile toggle listener
-    const mobileToggle = document.getElementById('mobile-nav-toggle');
-    if (mobileToggle) {
-        mobileToggle.addEventListener('click', mobileNavToggle);
-    }
-
-    // Close menu when clicking any nav link
-    const navLinks = document.querySelectorAll('.navbar a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            // Get the href attribute
-            const href = link.getAttribute('href');
-            
-            // Check if it's an anchor link
-            if (href && href.startsWith('#')) {
-                e.preventDefault();
-                
-                // Close mobile menu first
-                closeMobileNav();
-                
-                // Get target section
-                const targetId = href.substring(1);
-                const targetSection = document.getElementById(targetId);
-                
-                // Scroll to target or top of page
-                if (targetSection) {
-                    setTimeout(() => {
-                        targetSection.scrollIntoView({ 
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }, 100);
-                } else if (targetId === 'hero') {
-                    // If hero section doesn't exist, scroll to top
-                    setTimeout(() => {
-                        window.scrollTo({ 
-                            top: 0, 
-                            behavior: 'smooth' 
-                        });
-                    }, 100);
-                }
-            }
-        });
-    });
 });
+
+// Expose functions to the global scope so they can be called from onclick in HTML
+window.openLightbox = openLightbox;
+window.closeLightbox = closeLightbox;
+window.changeImage = changeImage;
