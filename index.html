@@ -58,36 +58,42 @@
 
             </div>
     </section>
-    <!-- Text Content -->
-            <!-- <div class="text-content">
-                <h1>The Legends</h1>
-                <p>
-                    Five individuals who changed the game forever. Each bringing their unique talent, 
-                    passion, and determination to create something extraordinary. Together, they represent 
-                    excellence, dedication, and the relentless pursuit of greatness.
-                </p>
-            </div> -->
 
 <section id="portfolio" class="portfolio">
-        <div class="portfolio-container">
-            <div class="portfolio-header">
-                <h2>Photography by Adetutu</h2>
-                <p>Capturing moments, telling stories</p>
+    <div class="portfolio-container">
+        <div class="portfolio-header">
+            <h2>Photography by Adetutu</h2>
+            <p>Capturing moments, telling stories</p>
+        </div>
+
+        <div class="carousel-container">
+            <button class="carousel-btn carousel-btn-prev" id="prevBtn">
+                <span>&#10094;</span>
+            </button>
+            
+            <div class="carousel-wrapper" id="carouselWrapper">
+                <!-- Images will be dynamically inserted here -->
             </div>
-
-            <div class="gallery-grid" id="galleryGrid">
-                </div>
+            
+            <button class="carousel-btn carousel-btn-next" id="nextBtn">
+                <span>&#10095;</span>
+            </button>
         </div>
-    </section>
 
-    <div class="lightbox" id="lightbox">
-        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-        <span class="lightbox-nav lightbox-prev" onclick="changeImage(-1)">&#10094;</span>
-        <div class="lightbox-content">
-            <img id="lightboxImg" src="" alt="Gallery Image">
+        <div class="carousel-indicators" id="carouselIndicators">
+            <!-- Dots will be dynamically inserted here -->
         </div>
-        <span class="lightbox-nav lightbox-next" onclick="changeImage(1)">&#10095;</span>
     </div>
+</section>
+
+<div class="lightbox" id="lightbox">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <span class="lightbox-nav lightbox-prev" onclick="changeImage(-1)">&#10094;</span>
+    <div class="lightbox-content">
+        <img id="lightboxImg" src="" alt="Gallery Image">
+    </div>
+    <span class="lightbox-nav lightbox-next" onclick="changeImage(1)">&#10095;</span>
+</div>
 
 </body>
 </html>
