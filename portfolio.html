@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Works — Adediran Adetutu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container-high": "#e8e8e7", "surface": "#f9f9f8",
+          "tertiary-container": "#1b1c1b", "on-background": "#1a1c1c",
+          "on-secondary": "#ffffff", "on-surface-variant": "#444748",
+          "surface-container": "#eeeeed", "surface-container-lowest": "#ffffff",
+          "outline-variant": "#c4c7c7", "outline": "#747878",
+          "surface-container-low": "#f4f4f3", "background": "#f9f9f8",
+          "secondary": "#625d5a", "on-surface": "#1a1c1c",
+          "on-primary": "#ffffff", "primary": "#000000",
+          "primary-container": "#1c1b1b", "primary-fixed": "#e5e2e1",
+          "on-primary-container": "#858383",
+        },
+        spacing: {
+          "section-padding-desktop": "140px", "margin-mobile": "24px",
+          "margin-desktop": "64px", "section-padding-mobile": "48px", "gutter": "32px"
+        },
+        fontFamily: {
+          "body-lg": ["DM Sans"], "label-sm": ["DM Sans"],
+          "body-md": ["DM Sans"], "headline-md": ["Playfair Display"],
+          "display-lg": ["Playfair Display"],
+        },
+        fontSize: {
+          "body-lg": ["18px", {"lineHeight": "1.8", "letterSpacing": "0.01em", "fontWeight": "300"}],
+          "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.15em", "fontWeight": "500"}],
+          "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "300"}],
+          "headline-md": ["42px", {"lineHeight": "1.3", "fontWeight": "400"}],
+          "headline-md-mobile": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+          "display-lg": ["84px", {"lineHeight": "1.05", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+          "display-lg-mobile": ["48px", {"lineHeight": "1.15", "letterSpacing": "-0.01em", "fontWeight": "400"}]
+        }
+      },
+    },
+  }
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { background-color: #f9f9f8; color: #1a1c1c; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+  .nav-scrolled { background-color: rgba(249,249,248,0.96) !important; border-bottom: 1px solid rgba(196,199,199,0.2); backdrop-filter: blur(20px); }
+
+  /* =============================================
+     GRID — CSS Grid, not column-count.
+     Each card owns its row space. Text sits
+     cleanly below its image, zero overlap.
+  ============================================= */
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 52px 24px;
+  }
+  @media (min-width: 600px) {
+    .portfolio-grid { grid-template-columns: repeat(2, 1fr); gap: 56px 28px; }
+  }
+  @media (min-width: 1024px) {
+    .portfolio-grid { grid-template-columns: repeat(3, 1fr); gap: 64px 36px; }
+  }
+
+  /* Card = flex column so caption never floats into the next card */
+  .portfolio-item {
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.5s ease, transform 0.4s cubic-bezier(0.23,1,0.32,1);
+  }
+  @media (hover: hover) {
+    .portfolio-item:hover { transform: translateY(-5px); }
+  }
+  .portfolio-item.hiding  { opacity: 0; transform: scale(0.95) translateY(10px) !important; }
+  .portfolio-item.hidden-item { display: none; }
+
+  /* Image wrapper — fixed aspect ratio, no overflow bleed */
+  .item-img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #eeeeed;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .item-img-wrap img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+  .portfolio-item:hover .item-img-wrap img { transform: scale(1.06); }
+
+  /* Hover overlay */
+  .item-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%);
+    opacity: 0; transition: opacity 0.4s ease;
+    pointer-events: none;
+    display: flex; align-items: flex-end; padding: 14px 16px;
+  }
+  .portfolio-item:hover .item-overlay { opacity: 1; }
+  .item-overlay span {
+    font-family: "DM Sans", sans-serif; font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.85);
+  }
+
+  /* Zoom icon badge */
+  .item-zoom-icon {
+    position: absolute; top: 10px; right: 10px;
+    width: 32px; height: 32px;
+    background: rgba(249,249,248,0.92);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(0.75);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+  }
+  .portfolio-item:hover .item-zoom-icon { opacity: 1; transform: scale(1); }
+
+  /* Caption — always below image, never overlapping */
+  .item-caption {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 10px;
+    padding: 0 2px;
+    flex-shrink: 0;
+    gap: 8px;
+  }
+  .item-caption h3 {
+    font-family: "Playfair Display", serif;
+    font-size: 15px; font-style: italic; font-weight: 400;
+    color: #1a1c1c; line-height: 1.3; margin: 0;
+    min-width: 0; /* allow truncation if needed */
+  }
+  .item-caption .cat-tag {
+    font-family: "DM Sans", sans-serif;
+    font-size: 10px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: #625d5a;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* =============================================
+     LIGHTBOX
+  ============================================= */
+  #lightbox {
+    position: fixed; inset: 0; z-index: 99999;
+    background: rgba(8,8,8,0.96);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    padding: 16px;
+  }
+  #lightbox.open { opacity: 1; visibility: visible; }
+
+  #lightbox-img {
+    max-width: min(88vw, 1200px);
+    max-height: 88vh;
+    object-fit: contain;
+    border-radius: 2px;
+    display: block;
+    transform: scale(0.93);
+    transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease;
+    opacity: 0;
+  }
+  #lightbox.open #lightbox-img { transform: scale(1); opacity: 1; }
+
+  #lightbox-close {
+    position: absolute; top: 18px; right: 22px;
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.6); font-size: 36px; line-height: 1;
+    transition: color 0.2s, transform 0.35s cubic-bezier(0.23,1,0.32,1);
+    padding: 6px; z-index: 1;
+  }
+  #lightbox-close:hover { color: #fff; transform: rotate(90deg); }
+
+  #lightbox-caption {
+    position: absolute; bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    font-family: "DM Sans", sans-serif; font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(255,255,255,0.38); white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* Prev / Next arrows */
+  .lb-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14);
+    color: rgba(255,255,255,0.65); cursor: pointer;
+    width: 46px; height: 46px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: background 0.25s, color 0.25s, opacity 0.3s;
+  }
+  .lb-arrow:hover { background: rgba(255,255,255,0.16); color: #fff; }
+  #lb-prev { left: 18px; } #lb-next { right: 18px; }
+  @media (max-width: 599px) {
+    #lb-prev { left: 6px; } #lb-next { right: 6px; }
+    .lb-arrow { width: 36px; height: 36px; font-size: 15px; }
+  }
+
+  /* Lightbox counter */
+  #lb-counter {
+    position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+    font-family: "DM Sans", sans-serif; font-size: 10px;
+    letter-spacing: 0.2em; color: rgba(255,255,255,0.35);
+    pointer-events: none;
+  }
+
+  /* Page header */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { animation: fadeUp 0.9s ease both; }
+  .delay-1 { animation-delay: 0.15s; } .delay-2 { animation-delay: 0.3s; } .delay-3 { animation-delay: 0.45s; }
+
+  .section-line { width: 60px; height: 1px; background: #000; display: block; }
+
+  /* Filter buttons */
+  .filter-btn {
+    font-family: "DM Sans", sans-serif; font-size: 11px; letter-spacing: 0.16em;
+    font-weight: 500; text-transform: uppercase; color: #625d5a;
+    padding-bottom: 3px; border-bottom: 1px solid transparent;
+    transition: color 0.25s, border-color 0.25s, transform 0.2s;
+    cursor: pointer; background: none;
+    border-top: none; border-left: none; border-right: none;
+  }
+  .filter-btn.active { color: #000; border-bottom-color: #000; }
+  .filter-btn:hover:not(.active) { color: #1a1c1c; transform: translateY(-2px); }
+
+  /* CTA button */
+  .btn-primary { background: #000; color: #fff; position: relative; overflow: hidden; display: inline-block; }
+  .btn-primary::before { content: ""; position: absolute; inset: 0; background: #625d5a; transform: translateX(-101%); transition: transform 0.5s cubic-bezier(0.77,0,0.175,1); z-index: 0; }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .underline-anim { position: relative; display: inline-block; }
+  .underline-anim::after { content: ""; position: absolute; bottom: -2px; left: 0; width: 100%; height: 1px; background: currentColor; transform: scaleX(1); transform-origin: left; transition: transform 0.4s cubic-bezier(0.77,0,0.175,1); }
+  .underline-anim:hover::after { transform: scaleX(0); transform-origin: right; }
+
+  /* Mobile menu */
+  #mobile-menu { transition: transform 0.6s cubic-bezier(0.77,0,0.175,1), opacity 0.5s ease; transform: translateX(100%); opacity: 0; }
+  #mobile-menu.open { transform: translateX(0); opacity: 1; }
+
+  /* Marquee */
+  .marquee-track { overflow: hidden; white-space: nowrap; }
+  .marquee-inner { display: inline-flex; align-items: center; }
+</style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed selection:text-on-primary-container">
+
+<!-- =============================================
+     LIGHTBOX
+============================================= -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button id="lightbox-close" aria-label="Close">&times;</button>
+  <div id="lb-counter"></div>
+  <button class="lb-arrow" id="lb-prev" aria-label="Previous">&#8592;</button>
+  <img id="lightbox-img" src="" alt=""/>
+  <button class="lb-arrow" id="lb-next" aria-label="Next">&#8594;</button>
+  <div id="lightbox-caption"></div>
+</div>
+
+<!-- =============================================
+     NAV
+============================================= -->
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-surface/80 transition-all duration-700">
+  <nav class="flex justify-between items-center w-full px-6 md:px-margin-desktop py-6 md:py-8 max-w-[1440px] mx-auto">
+    <a href="index.html" class="font-headline-md text-2xl md:text-3xl text-primary tracking-tight italic">Adetutu</a>
+    <div class="hidden md:flex items-center gap-10">
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-secondary transition-opacity duration-500 hover:opacity-60" href="index.html">Home</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-primary border-b border-primary pb-0.5" href="portfolio.html">Works</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-secondary transition-opacity duration-500 hover:opacity-60" href="about.html">About</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-secondary transition-opacity duration-500 hover:opacity-60" href="contact.html">Contact</a>
+    </div>
+    <a href="contact.html" class="hidden md:block btn-primary px-8 py-3 text-label-sm font-label-sm uppercase tracking-widest"><span>Inquire</span></a>
+    <button id="menu-toggle" class="md:hidden flex flex-col gap-[5px] p-2 z-50" aria-label="Open menu">
+      <span class="w-6 h-px bg-primary transition-all duration-300" id="bar1"></span>
+      <span class="w-6 h-px bg-primary transition-all duration-300" id="bar2"></span>
+      <span class="w-4 h-px bg-primary transition-all duration-300" id="bar3"></span>
+    </button>
+  </nav>
+</header>
+
+<!-- MOBILE MENU -->
+<div id="mobile-menu" class="fixed inset-0 bg-background z-40 flex flex-col justify-center items-center gap-10 pointer-events-none">
+  <a class="text-display-lg-mobile font-headline-md italic text-secondary" href="index.html" onclick="closeMenu()">Home</a>
+  <a class="text-display-lg-mobile font-headline-md italic text-primary" href="portfolio.html" onclick="closeMenu()">Works</a>
+  <a class="text-display-lg-mobile font-headline-md italic text-secondary" href="about.html" onclick="closeMenu()">About</a>
+  <a class="text-display-lg-mobile font-headline-md italic text-secondary" href="contact.html" onclick="closeMenu()">Contact</a>
+  <a href="contact.html" class="mt-8 btn-primary px-12 py-4 text-label-sm font-label-sm uppercase tracking-widest" onclick="closeMenu()"><span>Inquire</span></a>
+</div>
+
+<main class="pt-32 max-w-[1440px] mx-auto px-6 md:px-margin-desktop">
+
+  <!-- Page header -->
+  <section class="pb-14 md:pb-20">
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+      <div>
+        <span class="section-line mb-5 fade-in delay-1 inline-block"></span>
+        <h1 class="font-display-lg text-display-lg-mobile md:text-[72px] italic fade-in delay-1 leading-tight">Selected Works</h1>
+      </div>
+      <p class="font-body-lg text-body-lg text-secondary max-w-xs fade-in delay-2">
+        Photographs from Nigeria and beyond — intimate, honest, alive with tension.
+      </p>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <div class="pb-5 flex flex-wrap gap-7 md:gap-12 fade-in delay-2">
+    <button class="filter-btn active" data-filter="all">All Works</button>
+    <button class="filter-btn" data-filter="fine-art">Portraits of Interiority</button>
+    <button class="filter-btn" data-filter="documentary">The Unseen Everyday</button>
+    <button class="filter-btn" data-filter="portrait">Quiet Authority</button>
+  </div>
+
+  <!-- Work count -->
+  <div class="pb-10 fade-in delay-3">
+    <span id="item-count" class="font-label-sm text-label-sm uppercase tracking-widest text-secondary"></span>
+  </div>
+
+  <!-- =============================================
+       PORTFOLIO GRID
+       CSS Grid keeps each card self-contained.
+       Caption text can never bleed into adjacent cards.
+  ============================================= -->
+  <div class="portfolio-grid pb-section-padding-desktop" id="portfolio-grid">
+
+    <!-- == FINE ART == -->
+    <div class="portfolio-item" data-cat="fine-art" data-title="In Bloom, Silenced" data-tag="Conceptual">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/1.jpeg" alt="Conceptual portrait — flowers at the mouth" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>In Bloom, Silenced</h3><span class="cat-tag">Conceptual</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Concealment" data-tag="Conceptual">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/5.jpeg" alt="Surreal fashion portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Concealment</h3><span class="cat-tag">Conceptual</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Anonymous Youth" data-tag="Conceptual">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/10.jpeg" alt="Fine art — child with balloon head" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Anonymous Youth</h3><span class="cat-tag">Conceptual</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Study in Tones" data-tag="Fine Art">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/4.jpeg" alt="Fine art portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Study in Tones</h3><span class="cat-tag">Fine Art</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Weight of Being" data-tag="Conceptual">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/8.jpeg" alt="Fine art conceptual work" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Weight of Being</h3><span class="cat-tag">Conceptual</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Interior Light" data-tag="Fine Art">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/9.jpeg" alt="Artistic portrait work" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Interior Light</h3><span class="cat-tag">Fine Art</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Ritual" data-tag="Fine Art">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/11.jpeg" alt="Fine art photography" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Ritual</h3><span class="cat-tag">Fine Art</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="The Threshold" data-tag="Conceptual">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/12.jpeg" alt="Artistic portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>The Threshold</h3><span class="cat-tag">Conceptual</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Liminal" data-tag="Fine Art">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/13.jpeg" alt="Fine art portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Liminal</h3><span class="cat-tag">Fine Art</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="fine-art" data-title="Soft Architecture" data-tag="Conceptual">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/14.jpeg" alt="Conceptual fine art" loading="lazy"/>
+        <div class="item-overlay"><span>Fine Art</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Soft Architecture</h3><span class="cat-tag">Conceptual</span></div>
+    </div>
+
+    <!-- == DOCUMENTARY == -->
+    <div class="portfolio-item" data-cat="documentary" data-title="On the Road" data-tag="Documentary">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/15.jpeg" alt="Documentary — motorcyclist in black and white" loading="lazy"/>
+        <div class="item-overlay"><span>Documentary</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>On the Road</h3><span class="cat-tag">Documentary</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="documentary" data-title="Pure Joy" data-tag="Street">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/25.jpeg" alt="Documentary — child laughing" loading="lazy"/>
+        <div class="item-overlay"><span>Documentary</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Pure Joy</h3><span class="cat-tag">Street</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="documentary" data-title="Seen" data-tag="Candid">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/22.jpeg" alt="Candid documentary work" loading="lazy"/>
+        <div class="item-overlay"><span>Documentary</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Seen</h3><span class="cat-tag">Candid</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="documentary" data-title="Passage" data-tag="Documentary">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/23.jpeg" alt="Documentary — people" loading="lazy"/>
+        <div class="item-overlay"><span>Documentary</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Passage</h3><span class="cat-tag">Documentary</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="documentary" data-title="Still Here" data-tag="Street">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/24.jpeg" alt="Street documentary" loading="lazy"/>
+        <div class="item-overlay"><span>Documentary</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Still Here</h3><span class="cat-tag">Street</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="documentary" data-title="Gathering" data-tag="Documentary">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/6.jpeg" alt="Documentary" loading="lazy"/>
+        <div class="item-overlay"><span>Documentary</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Gathering</h3><span class="cat-tag">Documentary</span></div>
+    </div>
+
+    <!-- == PORTRAITS == -->
+    <div class="portfolio-item" data-cat="portrait" data-title="Unguarded" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/2.jpeg" alt="B&W portrait — woman laughing" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Unguarded</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Presence" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/20.jpeg" alt="Portrait — woman in traditional fabric" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Presence</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Tenderness" data-tag="Fine Art">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/30.jpeg" alt="Fine art portrait — woman with high bun" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Tenderness</h3><span class="cat-tag">Fine Art</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Character" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/7.jpeg" alt="Portrait photography" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Character</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Resolve" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/16.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Resolve</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Gaze" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/18.jpeg" alt="Portrait session" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Gaze</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Witness" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/21.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Witness</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Stillness" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/26.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Stillness</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Gravity" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/27.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Gravity</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Held" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/28.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Held</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="What Remains" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/29.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>What Remains</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Inhabit" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/31.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Inhabit</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Soft Power" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/32.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Soft Power</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Becoming" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/33.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Becoming</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+    <div class="portfolio-item" data-cat="portrait" data-title="Radiance" data-tag="Portrait">
+      <div class="item-img-wrap aspect-[3/4]">
+        <img src="img/34.jpeg" alt="Portrait" loading="lazy"/>
+        <div class="item-overlay"><span>Portrait</span></div>
+        <div class="item-zoom-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1a1c1c" stroke-width="2.2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></div>
+      </div>
+      <div class="item-caption"><h3>Radiance</h3><span class="cat-tag">Portrait</span></div>
+    </div>
+
+  </div><!-- /portfolio-grid -->
+
+  <!-- CTA -->
+  <section class="pb-section-padding-desktop text-center border-t border-outline-variant/20 pt-20">
+    <h2 class="font-headline-md text-headline-md text-primary mb-8 italic">Commission a Work</h2>
+    <p class="font-body-lg text-body-lg text-secondary max-w-md mx-auto mb-10">Each project is bespoke. Let's talk about yours.</p>
+    <a href="contact.html" class="btn-primary inline-block px-16 py-5 text-label-sm font-label-sm uppercase tracking-widest">
+      <span>Begin a Conversation</span>
+    </a>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-surface border-t border-outline-variant/20">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-6 md:px-margin-desktop py-16 md:py-20 max-w-[1440px] mx-auto gap-8">
+    <a href="index.html" class="font-headline-md text-2xl italic text-primary">Adetutu</a>
+    <div class="flex flex-wrap justify-center gap-10">
+      <a class="underline-anim text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary" href="portfolio.html">Works</a>
+      <a class="underline-anim text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary" href="about.html">About</a>
+      <a class="underline-anim text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary" href="contact.html">Contact</a>
+      <a class="underline-anim text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary" href="https://www.instagram.com/adetutu_adediran?igsh=MTc1OXduYmpmc2Q5NQ==" target="_blank" rel="noopener">Instagram &#8599;</a>
+    </div>
+    <div class="text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary opacity-60">&#169; 2025 Adediran Adetutu</div>
+  </div>
+</footer>
+
+<script src="animations.js"></script>
+<script>
+  /* ── NAVBAR ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('nav-scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  /* ── ITEMS & COUNT ── */
+  const allItems = Array.from(document.querySelectorAll('.portfolio-item'));
+  const countEl  = document.getElementById('item-count');
+
+  function updateCount(filter) {
+    const n = filter === 'all'
+      ? allItems.length
+      : allItems.filter(i => i.dataset.cat === filter).length;
+    countEl.textContent = n + ' Work' + (n !== 1 ? 's' : '');
+  }
+  updateCount('all');
+
+  /* ── FILTER ── */
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      allItems.forEach(item => {
+        const show = filter === 'all' || item.dataset.cat === filter;
+        if (!show) {
+          item.classList.add('hiding');
+          setTimeout(() => {
+            item.classList.add('hidden-item');
+            item.classList.remove('hiding');
+          }, 420);
+        } else {
+          item.classList.remove('hidden-item', 'hiding');
+        }
+      });
+      updateCount(filter);
+    });
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+        revealObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.04, rootMargin: '0px 0px -10px 0px' });
+
+  allItems.forEach((item, i) => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateY(26px)';
+    item.style.transition = 'opacity 0.65s ease ' + ((i % 6) * 0.07) + 's, transform 0.65s ease ' + ((i % 6) * 0.07) + 's';
+    revealObs.observe(item);
+  });
+
+  /* ── LIGHTBOX ── */
+  const lightbox  = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lightbox-img');
+  const lbCaption = document.getElementById('lightbox-caption');
+  const lbCounter = document.getElementById('lb-counter');
+  const lbClose   = document.getElementById('lightbox-close');
+  const lbPrev    = document.getElementById('lb-prev');
+  const lbNext    = document.getElementById('lb-next');
+
+  let lbList  = [];
+  let lbIndex = 0;
+
+  function getVisible() {
+    return allItems.filter(i => !i.classList.contains('hidden-item'));
+  }
+
+  function openLightbox(item) {
+    lbList  = getVisible();
+    lbIndex = lbList.indexOf(item);
+    renderLb(true);
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function renderLb(initial) {
+    const item = lbList[lbIndex];
+    const img  = item.querySelector('img');
+
+    if (!initial) {
+      lbImg.style.opacity = '0';
+      lbImg.style.transform = 'scale(0.96)';
+    }
+
+    setTimeout(() => {
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      lbCaption.textContent = item.dataset.title + '  \u00B7  ' + item.dataset.tag;
+      lbCounter.textContent = (lbIndex + 1) + ' / ' + lbList.length;
+      lbImg.style.opacity = '1';
+      lbImg.style.transform = 'scale(1)';
+      lbImg.style.transition = 'opacity 0.35s ease, transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+    }, initial ? 0 : 80);
+
+    lbPrev.style.opacity = lbIndex === 0 ? '0.25' : '1';
+    lbPrev.style.pointerEvents = lbIndex === 0 ? 'none' : 'auto';
+    lbNext.style.opacity = lbIndex === lbList.length - 1 ? '0.25' : '1';
+    lbNext.style.pointerEvents = lbIndex === lbList.length - 1 ? 'none' : 'auto';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { lbImg.src = ''; }, 400);
+  }
+
+  /* Click image to open */
+  allItems.forEach(item => {
+    item.querySelector('.item-img-wrap').addEventListener('click', () => openLightbox(item));
+  });
+
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  lbPrev.addEventListener('click', e => { e.stopPropagation(); if (lbIndex > 0) { lbIndex--; renderLb(false); } });
+  lbNext.addEventListener('click', e => { e.stopPropagation(); if (lbIndex < lbList.length - 1) { lbIndex++; renderLb(false); } });
+
+  /* Keyboard */
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft'  && lbIndex > 0)                { lbIndex--; renderLb(false); }
+    if (e.key === 'ArrowRight' && lbIndex < lbList.length - 1){ lbIndex++; renderLb(false); }
+  });
+
+  /* Touch swipe */
+  let touchStartX = null;
+  lightbox.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  lightbox.addEventListener('touchend', e => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 48) {
+      if (dx < 0 && lbIndex < lbList.length - 1) { lbIndex++; renderLb(false); }
+      if (dx > 0 && lbIndex > 0)                 { lbIndex--; renderLb(false); }
+    }
+    touchStartX = null;
+  }, { passive: true });
+
+  /* ── MOBILE MENU ── */
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
+  let menuOpen = false;
+
+  menuToggle.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    if (menuOpen) {
+      mobileMenu.classList.add('open'); mobileMenu.style.pointerEvents = 'all';
+      bar1.style.transform = 'rotate(45deg) translate(4px, 4px)';
+      bar2.style.opacity = '0';
+      bar3.style.transform = 'rotate(-45deg) translate(4px, -4px)';
+      bar3.style.width = '24px';
+    } else { closeMenu(); }
+  });
+
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    mobileMenu.style.pointerEvents = 'none';
+    bar1.style.transform = ''; bar2.style.opacity = '';
+    bar3.style.transform = ''; bar3.style.width = '';
+  }
+  window.closeMenu = closeMenu;
+</script>
+</body>
+</html>

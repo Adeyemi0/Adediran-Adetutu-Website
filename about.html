@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About — Adediran Adetutu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container-high": "#e8e8e7",
+          "surface": "#f9f9f8",
+          "tertiary-container": "#1b1c1b",
+          "on-surface-variant": "#444748",
+          "surface-container": "#eeeeed",
+          "surface-container-lowest": "#ffffff",
+          "outline-variant": "#c4c7c7",
+          "outline": "#747878",
+          "surface-container-low": "#f4f4f3",
+          "background": "#f9f9f8",
+          "secondary": "#625d5a",
+          "on-surface": "#1a1c1c",
+          "on-primary": "#ffffff",
+          "primary": "#000000",
+          "primary-container": "#1c1b1b",
+          "primary-fixed": "#e5e2e1",
+          "on-primary-container": "#858383",
+        },
+        spacing: {
+          "section-padding-desktop": "140px",
+          "margin-mobile": "24px",
+          "margin-desktop": "64px",
+          "section-padding-mobile": "48px",
+          "gutter": "32px"
+        },
+        fontFamily: {
+          "body-lg": ["DM Sans"],
+          "label-sm": ["DM Sans"],
+          "body-md": ["DM Sans"],
+          "headline-md": ["Playfair Display"],
+          "display-lg": ["Playfair Display"],
+        },
+        fontSize: {
+          "body-lg": ["18px", {"lineHeight": "1.8", "letterSpacing": "0.01em", "fontWeight": "300"}],
+          "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.15em", "fontWeight": "500"}],
+          "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "300"}],
+          "headline-md": ["42px", {"lineHeight": "1.3", "fontWeight": "400"}],
+          "headline-md-mobile": ["32px", {"lineHeight": "1.3", "fontWeight": "400"}],
+          "display-lg": ["84px", {"lineHeight": "1.05", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+          "display-lg-mobile": ["48px", {"lineHeight": "1.15", "letterSpacing": "-0.01em", "fontWeight": "400"}]
+        }
+      },
+    },
+  }
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    background-color: #f9f9f8;
+    color: #1a1c1c;
+    -webkit-font-smoothing: antialiased;
+  }
+  .nav-scrolled {
+    background-color: rgba(249, 249, 248, 0.96) !important;
+    border-bottom: 1px solid rgba(196, 199, 199, 0.2);
+  }
+  .img-hover-zoom { overflow: hidden; }
+  .img-hover-zoom img {
+    transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .img-hover-zoom:hover img { transform: scale(1.04); }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.revealed { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.15s; }
+  .reveal-delay-2 { transition-delay: 0.3s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .page-anim { animation: fadeUp 1s ease both; }
+  .anim-d1 { animation-delay: 0.2s; }
+  .anim-d2 { animation-delay: 0.4s; }
+  .anim-d3 { animation-delay: 0.6s; }
+
+  .section-line {
+    width: 60px; height: 1px; background: #000; display: block;
+  }
+
+  .btn-primary {
+    background: #000; color: #fff;
+    transition: background 0.5s ease;
+  }
+  .btn-primary:hover { background: #625d5a; }
+
+  #mobile-menu {
+    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.4s ease;
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  #mobile-menu.open { transform: translateX(0); opacity: 1; }
+
+  /* Widescreen image strip */
+  .wide-strip {
+    aspect-ratio: 21/9;
+    overflow: hidden;
+  }
+
+  /* === ENHANCED ANIMATIONS === */
+  body { overflow-x: hidden; }
+  .nav-scrolled { backdrop-filter: blur(20px); }
+
+  /* Reveal variants */
+  .reveal-left { opacity: 0; transform: translateX(-50px); transition: opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .reveal-right { opacity: 0; transform: translateX(50px); transition: opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .reveal-scale { opacity: 0; transform: scale(0.9); transition: opacity 0.9s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .reveal-left.revealed, .reveal-right.revealed, .reveal-scale.revealed { opacity: 1; transform: none; }
+
+  /* Section line animate */
+  .section-line { width: 0 !important; transition: width 1.2s cubic-bezier(0.77,0,0.175,1) 0.2s !important; }
+  .revealed .section-line, .page-anim .section-line { width: 60px !important; }
+
+  /* Underline animation */
+  .underline-anim { position: relative; display: inline-block; }
+  .underline-anim::after { content: ""; position: absolute; bottom: -2px; left: 0; width: 100%; height: 1px; background: currentColor; transform: scaleX(1); transform-origin: left; transition: transform 0.4s cubic-bezier(0.77,0,0.175,1); }
+  .underline-anim:hover::after { transform: scaleX(0); transform-origin: right; }
+
+  /* btn-primary sweep */
+  .btn-primary { position: relative; overflow: hidden; }
+  .btn-primary::before { content: ""; position: absolute; inset: 0; background: #625d5a; transform: translateX(-101%); transition: transform 0.5s cubic-bezier(0.77,0,0.175,1); z-index: 0; }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  /* Stat hover lift */
+  @media (hover: hover) {
+    .stat-lift { transition: transform 0.3s cubic-bezier(0.23,1,0.32,1); }
+    .stat-lift:hover { transform: translateY(-4px); }
+  }
+
+  /* Image parallax container */
+  .img-parallax-wrap { overflow: hidden; }
+  .img-parallax-wrap img { will-change: transform; transition: transform 1.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .img-parallax-wrap:hover img { transform: scale(1.04); }
+
+  /* Marquee */
+  .marquee-track { overflow: hidden; white-space: nowrap; }
+  .marquee-inner { display: inline-flex; align-items: center; gap: 0; }
+
+  /* Skew on scroll */
+  .skew-on-scroll { will-change: transform; }
+
+</style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed selection:text-on-primary-container">
+
+<!-- NAV -->
+<header id="navbar" class="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-surface/10 transition-all duration-700">
+  <nav class="flex justify-between items-center w-full px-6 md:px-margin-desktop py-6 md:py-8 max-w-[1440px] mx-auto">
+    <a href="index.html" class="font-headline-md text-2xl md:text-3xl text-primary tracking-tight italic">Adetutu</a>
+    <div class="hidden md:flex items-center gap-10">
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-secondary transition-opacity duration-500 hover:opacity-60" href="index.html">Home</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-secondary transition-opacity duration-500 hover:opacity-60" href="portfolio.html">Works</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-primary border-b border-primary pb-0.5" href="about.html">About</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-widest text-secondary transition-opacity duration-500 hover:opacity-60" href="contact.html">Contact</a>
+    </div>
+    <a href="contact.html" class="hidden md:block btn-primary px-8 py-3 text-label-sm font-label-sm uppercase tracking-widest">Inquire</a>
+    <button id="menu-toggle" class="md:hidden flex flex-col gap-[5px] p-2 z-50" aria-label="Open menu">
+      <span class="w-6 h-px bg-primary transition-all duration-300" id="bar1"></span>
+      <span class="w-6 h-px bg-primary transition-all duration-300" id="bar2"></span>
+      <span class="w-4 h-px bg-primary transition-all duration-300" id="bar3"></span>
+    </button>
+  </nav>
+</header>
+
+<!-- MOBILE MENU -->
+<div id="mobile-menu" class="fixed inset-0 bg-background z-40 flex flex-col justify-center items-center gap-10 pointer-events-none">
+  <a class="text-display-lg-mobile font-headline-md italic text-secondary" href="index.html" onclick="closeMenu()">Home</a>
+  <a class="text-display-lg-mobile font-headline-md italic text-secondary" href="portfolio.html" onclick="closeMenu()">Works</a>
+  <a class="text-display-lg-mobile font-headline-md italic text-primary" href="about.html" onclick="closeMenu()">About</a>
+  <a class="text-display-lg-mobile font-headline-md italic text-secondary" href="contact.html" onclick="closeMenu()">Contact</a>
+  <a href="contact.html" class="mt-8 btn-primary px-12 py-4 text-label-sm font-label-sm uppercase tracking-widest" onclick="closeMenu()">Inquire</a>
+</div>
+
+<main>
+
+  <!-- HERO SECTION -->
+  <section class="max-w-[1440px] mx-auto px-6 md:px-margin-desktop pt-36 md:pt-48 pb-section-padding-mobile md:pb-section-padding-desktop">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-end">
+
+      <!-- Portrait image -->
+      <div class="md:col-span-7 page-anim anim-d1">
+        <div class="img-hover-zoom bg-surface-container aspect-[4/5]">
+          <img
+            class="w-full h-full object-cover"
+            src="img/tutu 3.jpeg"
+            alt="Adetutu Adediran — photographer"
+            loading="eager"
+          />
+        </div>
+      </div>
+
+      <!-- Name & intro -->
+      <div class="md:col-span-5 md:pl-12 md:pb-16">
+        <span class="section-line mb-6 page-anim anim-d1 inline-block"></span>
+        <span class="font-label-sm text-label-sm uppercase tracking-[0.3em] text-secondary mb-4 block page-anim anim-d2">Lagos, Nigeria</span>
+        <h1 class="font-display-lg text-display-lg-mobile md:text-[64px] italic mb-6 leading-tight page-anim anim-d2">
+          Adediran<br/>Adetutu
+        </h1>
+        <p class="font-label-sm text-label-sm uppercase tracking-widest text-secondary mb-6 page-anim anim-d3">
+          Photographer · Visual Storyteller
+        </p>
+        <p class="font-body-lg text-body-lg text-on-surface-variant page-anim anim-d3">
+          I photograph what people carry in silence — the beauty they don't notice in themselves, and the tension they've grown too familiar with.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY SECTION -->
+  <section class="bg-surface-container-low py-section-padding-mobile md:py-section-padding-desktop">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-margin-desktop">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-20 reveal">
+          <span class="section-line inline-block mx-auto mb-8"></span>
+          <h2 class="font-headline-md text-headline-md-mobile md:text-headline-md italic mb-6 max-w-2xl mx-auto">
+            "A photograph is a conversation with someone who isn't in the room."
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12 md:gap-20">
+          <div class="reveal reveal-delay-1">
+            <p class="font-body-lg text-body-lg text-on-surface-variant mb-6">
+              I came to photography the way most people come to the things that matter — slowly, then all at once. Growing up in Lagos, I was surrounded by extraordinary faces and unscripted moments that no one seemed to think were worth stopping for.
+            </p>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">
+              I wanted to stop. I wanted to record the woman at the market who adjusted her gele with such precision it looked like a prayer. The child who laughed with their whole body at nothing anyone else could see. These felt like stories the world was already forgetting.
+            </p>
+          </div>
+          <div class="reveal reveal-delay-2">
+            <p class="font-body-lg text-body-lg text-on-surface-variant mb-6">
+              Over time, my work moved into fine art and conceptual portraiture — where the image is not just a record but a question. I started working with symbolism, staging, surreal juxtapositions. Not to hide reality, but to reveal more of it.
+            </p>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">
+              Today my practice moves freely between documentary and art photography. Both are honest. Both are searching for the same thing: the exact moment when a person is most completely themselves, and doesn't know you're watching.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY SECTION -->
+  <section class="py-section-padding-mobile md:py-section-padding-desktop max-w-[1440px] mx-auto px-6 md:px-margin-desktop">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-gutter items-start">
+      <div class="md:col-span-5 reveal">
+        <span class="section-line mb-6 inline-block"></span>
+        <h2 class="font-headline-md text-headline-md-mobile md:text-headline-md italic mb-8">The Approach</h2>
+        <div class="space-y-0 divide-y divide-outline-variant/20">
+          <div class="py-8">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-3">01 — Presence</span>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Every session begins with stillness. I don't rush toward the image.</p>
+          </div>
+          <div class="py-8">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-3">02 — Intention</span>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">Whether documentary or staged — every element earns its place in the frame.</p>
+          </div>
+          <div class="py-8">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-3">03 — Restraint</span>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">I edit down to the essential. What remains must be impossible to ignore.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-6 md:col-start-7 reveal reveal-delay-2">
+        <div class="img-hover-zoom bg-surface-container aspect-[4/5]">
+          <img
+            class="w-full h-full object-cover"
+            src="img/tutu.jpeg"
+            alt="Adetutu Adediran — second portrait"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WIDE IMAGE STRIP -->
+  <section class="bg-surface-container-low py-section-padding-mobile md:py-section-padding-desktop px-6 md:px-margin-desktop max-w-[1440px] mx-auto reveal">
+    <div class="wide-strip img-hover-zoom">
+      <img
+        class="w-full h-full object-cover"
+        src="img/20.jpeg"
+        alt="Documentary — fine art portrait with strong presence"
+        loading="lazy"
+      />
+    </div>
+    <p class="font-body-lg text-body-lg text-secondary italic mt-8 text-center max-w-lg mx-auto">
+      From the series <em>Quiet Authority</em> — fine art portraiture, Lagos.
+    </p>
+  </section>
+
+  <!-- CONNECT -->
+  <section class="py-section-padding-mobile md:py-section-padding-desktop">
+    <div class="max-w-[1440px] mx-auto px-6 md:px-margin-desktop text-center reveal">
+      <span class="section-line inline-block mx-auto mb-10"></span>
+      <h2 class="font-headline-md text-headline-md-mobile md:text-headline-md italic mb-6">Follow the Work</h2>
+      <p class="font-body-lg text-body-lg text-secondary max-w-md mx-auto mb-10">
+        New work, behind-the-scenes, and visual notes shared on Instagram.
+      </p>
+      <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+        <a
+          href="https://www.instagram.com/adetutu_adediran?igsh=MTc1OXduYmpmc2Q5NQ=="
+          target="_blank" rel="noopener"
+          class="btn-primary px-14 py-5 text-label-sm font-label-sm uppercase tracking-widest inline-block"
+        >
+          @adetutu_adediran ↗
+        </a>
+        <a href="contact.html" class="text-label-sm font-label-sm uppercase tracking-widest text-secondary border-b border-secondary pb-1 hover:text-primary hover:border-primary transition-all duration-500">
+          Commission a Project
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-surface border-t border-outline-variant/20">
+  <div class="flex flex-col md:flex-row justify-between items-center w-full px-6 md:px-margin-desktop py-16 md:py-20 max-w-[1440px] mx-auto gap-8">
+    <a href="index.html" class="font-headline-md text-2xl italic text-primary">Adetutu</a>
+    <div class="flex flex-wrap justify-center gap-10">
+      <a class="text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary hover:text-primary transition-colors duration-500" href="portfolio.html">Works</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary hover:text-primary transition-colors duration-500" href="about.html">About</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary hover:text-primary transition-colors duration-500" href="contact.html">Contact</a>
+      <a class="text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary hover:text-primary transition-colors duration-500" href="https://www.instagram.com/adetutu_adediran?igsh=MTc1OXduYmpmc2Q5NQ==" target="_blank" rel="noopener">Instagram ↗</a>
+    </div>
+    <div class="text-label-sm font-label-sm uppercase tracking-[0.2em] text-secondary opacity-60">© 2025 Adediran Adetutu</div>
+  </div>
+</footer>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('nav-scrolled', window.scrollY > 60);
+  });
+
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('revealed'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
+  let menuOpen = false;
+
+  menuToggle.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    if (menuOpen) {
+      mobileMenu.classList.add('open');
+      mobileMenu.style.pointerEvents = 'all';
+      bar1.style.transform = 'rotate(45deg) translate(4px, 4px)';
+      bar2.style.opacity = '0';
+      bar3.style.transform = 'rotate(-45deg) translate(4px, -4px)';
+      bar3.style.width = '24px';
+    } else {
+      closeMenu();
+    }
+  });
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    mobileMenu.style.pointerEvents = 'none';
+    bar1.style.transform = '';
+    bar2.style.opacity = '';
+    bar3.style.transform = '';
+    bar3.style.width = '';
+  }
+  window.closeMenu = closeMenu;
+</script>
+<script src="animations.js"></script>
+</body>
+</html>
